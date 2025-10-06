@@ -1,0 +1,456 @@
+<!-- Paste this entire code into a full HTML file -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Period Tracker with Notifications</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+     
+      
+    }
+
+    h3 {
+      color: #e91e63;
+    }
+
+    .controls {
+      margin-bottom: 20px;
+      text-align:center;
+    }
+
+    select {
+      padding: 6px 10px;
+      margin: 5px;
+      font-size: 16px;
+      border:1px solid black;
+      border-radius:4px;
+      cursor:pointer;
+   
+    }
+    .duration{
+      position: absolute;
+      margin-left:50px;
+      margin:2px;
+    }
+    .duLabel{
+      margin-top:14px;
+      margin-left:-60px;
+    }
+    .controls label{
+      width:75px;
+      display:inline-block;
+      text-align: left;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .day {
+      padding: 10px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .period {
+      background-color: #f44336;
+      color: #fff;
+    }
+
+    .follicular {
+      background-color: #b3e5fc;
+    }
+
+    .ovulation {
+      background-color: #9c27b0;
+      color: #fff;
+    }
+
+    .luteal {
+      background-color: #ffe0b2;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .color-box {
+      width: 15px;
+      height: 15px;
+      margin-right: 5px;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+    }
+
+    .box-period { background-color: #f44336; }
+    .box-follicular { background-color: #b3e5fc; }
+    .box-ovulation { background-color: #9c27b0; }
+    .box-luteal { background-color: #ffe0b2; }
+
+    .today-box {
+      margin-top: 10px;⁰
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .notification {
+      margin-top: 10px;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+  
+  header{
+    display:flex;
+    justify-content:space-between;
+    background-color:#fff0f5;
+    padding:10px;
+
+    margin-top:-15px;
+  }
+  section{
+    position:absolute;
+    margin-top:70px;
+    text-align:center;
+    display:column;
+    justify-content:center;
+  }
+  .image{
+    margin-top:-30px;
+    margin-right:165px;
+    
+  }
+  ul{
+    list-style:none;
+    position:absolute;
+  }
+  ul li{
+    display:inline-block;
+    position:relative;
+  }
+  ul li a{
+    display:block;
+    text-align:right;
+    padding: 15px 25px;
+    color: #ffff;
+    text-decoration:none;
+    text-align:center;
+    font-size:18px;
+    cursor:pointer;
+  }
+  ul li ul.dropdown li{
+    display:block;
+  }
+  ul li ul.dropdown{
+    width:80%;
+    background:#c2185b;
+    z-index:999;
+    display:none;
+    border-radius:4px;
+    padding:10px;
+    text-align:center;
+  }
+   ul li ul.dropdown li a:hover{
+     background:pink;
+     border-radius:6px;
+     padding:6px;
+   }
+  ul li a #a:hover{
+    background:pink;
+    border-radius:6px;
+    padding:8px;
+    text-align:center;
+
+    
+  }
+  ul li:hover  ul.dropdown{
+    display:block;
+  }
+  #button{
+    margin:20px;
+    font-size:19px;
+    font-family:Helvetica;
+    background:transparent;
+    border:2px solid white;
+    border-radius:10px;
+    color:#c2185b;
+    padding:3px;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    
+  }
+  #cycle{
+    color:#c2185b;
+    background:#fff0f5;
+    border:2px solid pink;
+    justify-content:center;
+    padding:15px;
+    text-aling:center;
+  }
+   #button a{
+     
+     text-decoration: none;
+     color:#c2185b;
+     bottom-border:1px solid white;
+   }
+   h3{
+    margin:25px;
+    text-align: center;
+   }
+   .noti{
+    border:1px solid black;
+    border-radius:4px;
+    outline:none;
+    font-family: sans-serif;
+    font-size:14px;
+    cursor:pointer;
+   }
+   .today-box{
+    margin:20px;
+    text-align: center;
+   }
+  </style>
+</head>
+<body>
+  <header>
+    <div><h4>Saint+</h4></div>
+    <h4 id="greeting"></h4>
+    <div class="image">
+      <ul>
+        <li><a href="#">
+          <img src="6522516.png" alt="profile" width="73px">
+          <ul class="dropdown">
+            <li><a href="chart.html" id="a">Chart</a></li>
+            <li><a href="FAQ.html"  id="a">FAQs</a></li>
+            <li><a href="chatbot.html"  id="a">Chat</a></li>
+        
+            <li><a href="#">Apps</a></li>
+          </ul>
+        </a></li>
+      </ul>
+      
+     
+    </div>
+  </header>
+  <h3>Menstrual Cycle Tracker</h3>
+  <div class="controls">
+    <label>
+      Start Day:</label>
+    <select id="startDay"></select><br />
+    <label class="duLabel">
+      Duration:</label>
+    <select id="duration" class="duration"></select>
+    <br /> <br /> <br />
+    <button onclick="requestPermission()" class="notification noti">Enable Notifications</button>
+  </div>
+
+  <div class="calendar" id="calendar"></div>
+
+  <div class="legend"><h4>Phases:</h4>
+    <div class="legend-item"><div class="color-box box-period"></div>Period</div>
+    <div class="legend-item"><div class="color-box box-follicular"></div>Follicular</div>
+    <div class="legend-item"><div class="color-box box-ovulation"></div>Ovulation</div>
+    <div class="legend-item"><div class="color-box box-luteal"></div>Luteal</div>
+  </div>
+<br /> 
+  <div class="today-box" id="todayStatus"></div>
+  <br /> <br />
+  <br /><br />
+    
+    <div id="cycle">
+      <h3>What happens:</h3>
+      <p id="u">78</p>
+      <button id="button"><a href="FAQ.html"> Learn More</a></button>
+    </div><br /><br />
+    
+    <div id="cycle">
+      <h3>Effects:</h3>
+      <p id="y"></p>
+    </div><br /><br />
+    
+    <div id="cycle">
+      <h3>What to do:</h3>
+      <p id="t"></p><br />
+      
+      <button id="button"><a href="chart.html">Track Cycle</a></button>
+    </div>
+
+  <script>
+  
+    const calendar = document.getElementById("calendar");
+    const startDaySelect = document.getElementById("startDay");
+    const durationSelect = document.getElementById("duration");
+    const todayStatus = document.getElementById("todayStatus");
+
+    for (let i = 1; i <= 28; i++) {
+      startDaySelect.appendChild(new Option(i, i));
+    }
+
+    for (let i = 1; i <= 10; i++) {
+      durationSelect.appendChild(new Option(i + " day" + (i > 1 ? "s" : ""), i));
+    }
+
+    startDaySelect.value = localStorage.getItem("startDay") || 1;
+    durationSelect.value = localStorage.getItem("duration") || 5;
+
+    function getWrappedDays(start, length) {
+      const days = [];
+      for (let i = 0; i < length; i++) {
+        days.push(((start - 1 + i) % 28) + 1);
+      }
+      return days;
+    }
+
+    function getPhase(day, periodDays, ovulationDay, lastPeriodDay) {
+      if (periodDays.includes(day)) return "Period";
+      if (day === ovulationDay) return "Ovulation";
+      if (
+        (lastPeriodDay < ovulationDay && day > lastPeriodDay && day < ovulationDay) ||
+        (lastPeriodDay > ovulationDay && (day > lastPeriodDay || day < ovulationDay))
+      ) return "Follicular";
+      return "Luteal";
+    }
+
+    function sendNotification(phase) {
+      if (Notification.permission === "granted") {
+        let msg = "";
+
+        switch (phase) {
+          case "Period":
+            msg = "Your period is ongoing. Take care and rest!";
+            break;
+          case "Ovulation":
+            msg = "Ovulation day! Fertility is high.";
+            break;
+          case "Follicular":
+            msg = "You're in the follicular phase. Great time for productivity.";
+            break;
+          case "Luteal":
+            msg = "Luteal phase started. Mood changes or cravings may appear.";
+            break;
+        }
+
+        new Notification("Cycle Tracker", { body: msg });
+      }
+    }
+
+    function generateCalendar() {
+      calendar.innerHTML = "";
+
+      const startDay = parseInt(startDaySelect.value);
+      const duration = parseInt(durationSelect.value);
+      localStorage.setItem("startDay", startDay);
+      localStorage.setItem("duration", duration);
+
+      const periodDays = getWrappedDays(startDay, duration);
+      const ovulationDay = ((startDay + 13 - 1) % 28) + 1;
+      const lastPeriodDay = periodDays[periodDays.length - 1];
+      
+      const array = {
+        day1_5: "The uterine lining (endometrium) is shed through the vagina - this is menstruation. Hormones level (oestrogen and progesterone) are at their lowest. Blood loss can vary (light or heavy)",
+        day6_14: "Oestrogen level rise. Follicle-Stimulating-Hormone (FSH) cause mature egg(s) to develop. Uterine lining thickens in preparation for a potential pregnancy. Ends with ovulation on day 14.",
+        day14: "The matured egg is released from ovary into the fallopian tube. Oestrogen peaks and luteinizing hormone (LH) surges. Body is most fertile now.",
+        day15_28: "Progesterone rises to maintain uterine lining. If no fertilisation, hormone levels drops by Day 26-28, triggering menstruation. PMS may occur in the second half."
+      }
+      const array2 = {
+        day1_5: "Fatigue, cramps, headaches. Emotional sensitivity or low mood. Lower energy levels. Disrupt sleep or Digestive changes.",
+        day6_14: "Boost in energy and mood. Improved focus, social skills, and confidence. Skin often clear and glows.",
+        day14: "May feel more attractive, energetic, and social. Cervical mucus becomes stretchy and clear (like egg white). Some experience mild ovulation pain, (called mittelschmerz).Libido may increase.",
+        day15_28: "Bloating, breast tenderness, mood swings, fatigue, cravings. Irritability or anxiety may increase. Focus and motivation may decrease. Sleep disturbances may start."
+      }
+      
+      const array3 = {
+        day1_5: "Rest and allow time for recovery. Use heating pads for cramps. Stay hydrated and eat-iron rich food(e.g spinach, lentils). Light movement like walking or gentle yoga can help circulation and reduce cramps. Track your cycle using an app or calendar.",
+        day6_14: "Take on high energy task(work, work out, social events). Begin or plan new projects - great time for learning and productivity. Eat protein-rich foods and complex carbs to sustain energy. Engage in activities.",
+        day14: "Ideal for important conversations, interviews, dates. Continue balance diet and hydration. Practice safe sex or try to concieve, depending on your goal. Exercise may feel easire and enjoyable.",
+        day15_28: "Priotize self-care, rest, and stress reduction. Eat magnesium-rich foods (dark chocolate, almonds) to reduce PMS. Practice gentle movement like stretching, walking, pilates. Avoid caffeine and salty foods to help reduce bloating and irritability. Journaling or reflection can help process emotions.",
+      }
+  
+      for (let i = 1; i <= 28; i++) {
+        const div = document.createElement("div");
+        div.classList.add("day");
+        div.textContent = "Day " + i;
+
+        const phase = getPhase(i, periodDays, ovulationDay, lastPeriodDay);
+
+        if (phase === "Period") div.classList.add("period");
+        else if (phase === "Ovulation") div.classList.add("ovulation");
+        else if (phase === "Follicular") div.classList.add("follicular");
+        else if (phase === "Luteal") div.classList.add("luteal");
+
+        calendar.appendChild(div);
+      }
+
+      const today = new Date();
+      const dayOfCycle = ((today.getDate() - 1) % 28) + 1;
+      const todayPhase = getPhase(dayOfCycle, periodDays, ovulationDay, lastPeriodDay);
+      todayStatus.textContent = `Today is Day ${dayOfCycle} of your cycle — Phase: ${todayPhase}`;
+      
+     if(today.getDate() === 1 || today.getDate() === 2 || today.getDate() === 3 || today.getDate() === 4 || today.getDate() === 5){
+        document.getElementById("u").innerHTML = array.day1_5;
+        document.getElementById("y").innerHTML = array2.day1_5;
+        document.getElementById("t").innerHTML = array3.day1_5;
+      }else if(today.getDate() === 6 || today.getDate() === 7 || today.getDate() === 8 || today.getDate() === 9 || today.getDate() === 10 || today.getDate() === 11 || today.getDate() === 12 || today.getDate() === 13){
+        document.getElementById("u").innerHTML = array.day6_14;
+        document.getElementById("y").innerHTML = array2.day6_14;
+        document.getElementById("t").innerHTML = array3.day6_14;
+      }else if(today.getDate() === 14){
+        document.getElementById("u").innerHTML = array.day6_14;
+        document.getElementById("y").innerHTML = array2.day6_14;
+        document.getElementById("t").innerHTML = array3.day6_14;
+      }else if(today.getDate() === 15 || today.getDate() === 16 || today.getDate() === 17 || today.getDate() === 18 || today.getDate() === 19 || today.getDate() === 20 || today.getDate() === 21 || today.getDate() === 22 || today.getDate() === 23 || today.getDate() === 24 || today.getDate() === 25 || today.getDate() === 26 || today.getDate() === 27 || today.getDate() === 28){
+        document.getElementById("u").innerHTML = array.day15_28;
+        document.getElementById("y").innerHTML = array2.day15_28;
+        document.getElementById("t").innerHTML = array3.day15_28;
+      }
+
+      sendNotification(todayPhase);
+    }
+
+    function requestPermission() {
+      if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            alert("Notifications enabled! We'll remind you of key cycle events.");
+          }
+        });
+      } else {
+        alert("This browser doesn't support notifications.");
+      }
+    }
+
+    startDaySelect.addEventListener("change", generateCalendar);
+    durationSelect.addEventListener("change", generateCalendar);
+
+    generateCalendar();
+      
+ 
+  
+  
+  
+   
+  
+  </script>
+</body>
+</html>

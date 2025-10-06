@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Menstrual Cycle Tracker with Prediction</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff0f5;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #c2185b;
+    }
+
+    #cycleForm {
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    canvas {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    #prediction {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #880e4f;
+    }
+  </style>
+</head>
+<body>
+  <h2>🩸 Menstrual Cycle Tracker with Prediction</h2>
+
+  <form id="cycleForm">
+    <label>Start Date: <input type="date" id="startDate" required></label>
+    <label>Duration (days): <input type="number" id="duration" min="1" max="10" required></label>
+    <button type="submit">Add Cycle</button>
+  </form>
+
+  <canvas id="cycleChart" width="400" height="200"></canvas>
+
+  <div id="prediction">Next period prediction will appear here.</div>
+
+  <script>
+    const form = document.getElementById('cycleForm');
+    const chartCanvas = document.getElementById('cycleChart');
+    const predictionDiv = document.getElementById('prediction');
+
+    let cycleData = JSON.parse(localStorage.getItem('cycleHistory')) || [];
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const date = document.getElementById('startDate').value;
+      const duration = parseInt(document.getElementById('duration').value);
+      if (date && duration) {
+        cycleData.push({ date, duration });
+        cycleData.sort((a, b) => new Date(a.date) - new Date(b.date)); // ensure sorted
+        localStorage.setItem('cycleHistory', JSON.stringify(cycleData));
+        updateChart();
+        form.reset();
+      }
+    });
+
+    let chart = new Chart(chartCanvas, {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Cycle Duration (days)',
+          data: [],
+          backgroundColor: '#ec407a'
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 10
+          }
+        }
+      }
+    });
+
+    function updateChart() {
+      chart.data.labels = cycleData.map(item => item.date);
+      chart.data.datasets[0].data = cycleData.map(item => item.duration);
+      chart.update();
+      updatePrediction();
+    }
+
+    function updatePrediction() {
+      if (cycleData.length < 2) {
+        predictionDiv.textContent = "Enter at least 2 cycles to predict the next period.";
+        return;
+      }
+
+      // Calculate average cycle length (from start date to start date)
+      let totalDiff = 0;
+      for (let i = 1; i < cycleData.length; i++) {
+        const prev = new Date(cycleData[i - 1].date);
+        const current = new Date(cycleData[i].date);
+        const diff = (current - prev) / (1000 * 60 * 60 * 24); // in days
+        totalDiff += diff;
+      }
+
+      const averageCycle = Math.round(totalDiff / (cycleData.length - 1));
+
+      const lastDate = new Date(cycleData[cycleData.length - 1].date);
+      const nextStartDate = new Date(lastDate);
+      nextStartDate.setDate(lastDate.getDate() + averageCycle);
+
+      predictionDiv.textContent = `📅 Based on your data, your next period is likely to start around: ${nextStartDate.toDateString()} (Avg. cycle: ${averageCycle} days)`;
+    }
+
+    // On page load
+    updateChart();
+  </script>
+</body>
+</html>

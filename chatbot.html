@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Period Chatbot</title>
+  <style>
+    body {
+      background-color: #fff0f5;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    #chatApp {
+      max-width: 600px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #c2185b;
+    }
+
+    #messages {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      height: 400px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    .msg {
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 75%;
+    }
+
+    .user {
+      background: #c2185b;
+      color: white;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .bot {
+      background: #f8bbd0;
+      color: black;
+      margin-right: auto;
+    }
+
+    #inputArea {
+      display: flex;
+      gap: 10px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #c2185b;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #ad1457;
+    }
+  </style>
+</head>
+<body>
+
+<div id="chatApp">
+  <h2>🩸 Ask Me Anything About Your Period</h2>
+  <div id="messages"></div>
+  <div id="inputArea">
+    <input type="text" id="userInput" placeholder="Ask a question..." />
+    <button onclick="processInput()">Send</button>
+  </div>
+</div>
+
+<script>
+  const faqList = [
+    {
+      question: "What is menstruation?",
+      keywords: ["menstruation"],
+      answer: "Menstruation is the monthly shedding of the uterine lining, causing bleeding from the vagina."
+    },
+    {
+      question: "How long is a cycle?",
+      keywords: ["cycle", "periods"],
+      answer: "A menstrual cycle usually lasts 28 days but can vary between 21 and 35 days."
+    },
+    {
+      question: "Can I get pregnant during my period?",
+      keywords: ["pregnant"],
+      answer: "It's unlikely but possible, especially if ovulation happens early in the cycle."
+    },
+    {
+      question: "What causes cramps?",
+      keywords: ["cramp"],
+      answer: "Cramps are caused by uterine contractions during menstruation."
+    },
+    {
+      question: "How can I relieve cramps?",
+      keywords: ["relieve"],
+      answer: "Use a heat pad, drink warm fluids, stretch gently, or take ibuprofen to relieve cramps."
+    },
+    {
+      question: "Why is my period irregular?",
+      keywords: ["irregular"],
+      answer: "Irregular periods can be caused by stress, PCOS, thyroid problems, or weight changes."
+    },
+    {
+      question: "What is PMS?",
+      keywords: ["pms"],
+      answer: "PMS includes symptoms like mood swings, bloating, and fatigue before your period starts."
+    },
+    {
+      question: "When does a period usually start?",
+      keywords: ["start"],
+      answer: "Periods usually start between ages 9–15, with an average age of around 12."
+    },
+    {
+      question: "At what age does menstruation start?",
+      keywords: ["age"],
+      answer: "Menstruation typically starts between ages 9 and 15, with an average onset around 12 years old."
+    },
+    {
+      question: "What is ovulation?",
+      keywords: ["ovulation"],
+      answer: "Ovulation is when an ovary releases an egg. It usually occurs around day 14 of a 28-day cycle."
+    },
+    {
+      question: "What is a normal amount of bleeding?",
+      keywords: ["bleeding", "amount"],
+      answer: "Losing 30-80ml of blood is typical. Changing pads/tampons every 3-4 hours is considered normal."
+    },
+    {
+      question: "What is PMDD?",
+      keywords: ["PMDD"],
+      answer: "Premenstrual Syndrome includes sympyoms like mood swings, bloating, fatigue, and irritability before menstruation."
+  },
+  {
+    question: "Should I exercise during my periods?",
+    keywords: ["exercise","walk", "yoga"],
+    answer: "Yes. Light exercise like walking or yoga can help relieve symptoms."
+  },
+  {
+    question: "Is it normal to have clots during menstruation?",
+    keywords: ["clots"],
+    answer: "Small clots are common, but large clots may suggest heavy bleeding (menorrhagia)."
+  },
+  {
+    question: "Can periods affect moods?",
+    keywords: ["moods"],
+    answer: "Yes. Hormonal changes can cause anxiety, sadness, irritability, or mood swings.",
+  },
+  {
+    question: "What is menorrhagia?",
+    keywords:["menorrhagia"],
+    answer: "Excessive menstrual bleeding, often requiring pad changes every 1-2 hours."
+  },
+  {
+    question: "what is spotting?",
+    keywords: ["spotting", "light bleeding"],
+    answer: "Light bleeding beween periods. It can be due to birth control, ovulation, or health issues."
+  },
+  {
+    question: "Is it white or clear discharge normal?",
+    keywords: ["discharge", "clear", "white"],
+    answer: "Yes, it's part of healthy cycle. If it changes color or smells bad, see a doctor"
+  },
+  {
+    question: "How can I track my periods?",
+    keywords: ["track"],
+    answer: "Use apps, calendars, or physica; trackers. This helps notice patterns and irregularity."
+  },
+  {
+    question: "what is amenorrhea?",
+    keywords: ["amenorrhea"],
+    answer: "The absence of menstruation. It may be primary (never started) or secondary (stopped for 3+ months)."
+  },
+  {
+    question: "Is it safe to use tampons or menstrual cups?",
+    keywords: ["menstrual cups", "tampons"],
+    answer: "Yes, when used correctly and changed regularly.",
+  },
+  {
+    question: "Can I swim during my periods?",
+    keywords: ["swim", "during"],
+    answer: "Yes, especially if your cycle is shorter than 28 days."
+  },
+  {
+    question: "Can I get my periods twice in a month?",
+    keywords: ["twice", "more than"],
+    answer: "Yes, especially if your cycle is shorter than 28 days."
+  },
+  {
+    question: "What is implantation bleeding?",
+    keywords: ["implantation", "bleeding"],
+    answer: "Light spotting that occurs when fertilized egg attaches to the uterus. It may be mistaken for light period."
+  },
+  {
+    question: "Do birth control pills affect menstruation?",
+    keywords: ["birth control", "pills","affect"],
+    answer:"Yes. They can make periods lighter, more regular, or stop them altogether."
+  },
+  {
+    question: "Is it nomal to feel tired during a period?",
+    keywords: ['tired', "feel"],
+    answer: "Yes. Hormones, blood loss, and cramps can cause fatigue."
+  },
+  {
+    question: "When should I see a doctor about my periods?",
+    keywords: ['see', "doctor"],
+    answer: "Very painful. Heavy bleeding. Irregular often. Missed for months. Causing emotional distress."
+  },
+  {
+    question: "Can diet affect menstruation?",
+    keywords: ["diet"],
+    answer: "Yes. Extreme dieting or low body weight can delay or stop periods."
+  },
+  {
+    question: "Is it okay to fast during your periods?",
+    keywords: ["fast"],
+    answer: "Generally, yes -  but listen to your body. If you feel dizzy or weak, eat and hydrate."
+  },
+  {
+    question: "What is a hormonal IUD and how does it affect periods?",
+    keywords: ["IUD", "hormonal", "hormone"],
+    answer: "It's a birth control device. It can redce or stop periods over time."
+  }
+  ];
+
+  function processInput() {
+    const inputEl = document.getElementById("userInput");
+    const userText = inputEl.value.trim().toLowerCase();
+    if (!userText) return;
+
+    showMessage(userText, "user");
+
+    const bestMatch = getBestMatch(userText);
+    const botReply = bestMatch
+      ? bestMatch.answer
+      : "I'm not sure about that. You can try asking things like: 'What is PMS?', 'How can I relieve cramps?', or 'Can I get pregnant during my period?'";
+
+    setTimeout(() => showMessage(botReply, "bot"), 500);
+    inputEl.value = "";
+  }
+
+  function getBestMatch(input) {
+    let maxMatches = 0;
+    let best = null;
+
+    for (const faq of faqList) {
+      let matches = 0;
+      for (const keyword of faq.keywords) {
+        if (input.includes(keyword)) matches++;
+      }
+
+      if (matches > maxMatches) {
+        maxMatches = matches;
+        best = faq;
+      }
+    }
+
+    return maxMatches > 0 ? best : null;
+  }
+
+  function showMessage(text, type) {
+    const msgBox = document.getElementById("messages");
+    const msg = document.createElement("div");
+    msg.className = `msg ${type}`;
+    msg.textContent = text;
+    msgBox.appendChild(msg);
+    msgBox.scrollTop = msgBox.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
